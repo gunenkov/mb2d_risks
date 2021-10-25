@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using WebApplication1.BackgroundService;
 using WebApplication1.Models;
 
 namespace WebApplication1
@@ -40,6 +41,7 @@ namespace WebApplication1
             /* var connection = Configuration.GetConnectionString("DefaultConnection");
              services.AddDbContext<DataBaseContext>(options =>
                  options.UseSqlServer(connection));*/
+            services.AddHostedService<CheckStatusEventLog>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
