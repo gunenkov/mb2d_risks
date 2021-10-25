@@ -31,7 +31,7 @@ namespace WebApplication1.BackgroundService
             foreach (var myevent in activeEvents)
             {
                 //получаем продолжительность
-                var duration = context.Events.FirstOrDefault(x => x.Id == myevent.Id).DurationInSeconds;
+                //var duration = context.Events.FirstOrDefault(x => x.Id == myevent.Id).DurationInSeconds;
                 //если конец меньше текущей даты
                 if (myevent.Finish > currentDate)
                 {

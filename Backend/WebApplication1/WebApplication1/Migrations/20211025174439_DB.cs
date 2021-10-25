@@ -153,8 +153,7 @@ namespace WebApplication1.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_EventsLogs_EventId",
                 table: "EventsLogs",
-                column: "EventId",
-                unique: true);
+                column: "EventId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Incidents_RiskId",
