@@ -84,7 +84,7 @@ namespace WebApplication1.Controllers
         [HttpPost]
         public async Task<ActionResult<Incident>> PostIncident(IncidentDto incidentDto)
         {
-            var risk = _context.Risks.FirstOrDefault(r=>r.Name == incidentDto.RiskName);
+            var risk = _context.Risks.Include(r=>r.Events).FirstOrDefault(r=>r.Name == incidentDto.RiskName);
 
             if (risk == null)
             {
@@ -101,6 +101,21 @@ namespace WebApplication1.Controllers
 
             _context.Incidents.Add(incident);
             await _context.SaveChangesAsync();
+
+            foreach (var @event in risk.Events)
+            {
+                var log = new EventsLog
+                {
+                    EventId = @event.Id,
+                    Start = DateTime.Now.ToLocalTime(),
+                    Finish = DateTime.Now.ToLocalTime().AddSeconds(@event.DurationInSeconds),
+                    RiskId = risk.Id,
+                    Status = EventLogStatus.Active
+                };
+                _context.EventsLogs.Add(log);
+                await _context.SaveChangesAsync();
+                @event.EventsLog = log;
+            }
 
             return CreatedAtAction("GetIncident", new { id = incident.Id }, incident);
         }
@@ -133,24 +148,13 @@ namespace WebApplication1.Controllers
             foreach (var incident in incidents)
             {
                 var risk = _context.Risks.Include(r=>r.Events).FirstOrDefault(r => r.Id == incident.RiskId);
-                var events = _context.Events.ToList();
                 incident.Events = risk.Events;
 
-                foreach (var @event in events)
+                foreach (var event_ in risk.Events)
                 {
-                    var log = new EventsLog
-                    {
-                        EventId = @event.Id,
-                        Start = DateTime.Now.ToLocalTime(),
-                        Finish = DateTime.Now.ToLocalTime().AddSeconds(@event.DurationInSeconds),
-                        RiskId = risk.Id,
-                        Status = EventLogStatus.Active
-                    };
-                    _context.EventsLogs.Add(log);
-                    await _context.SaveChangesAsync();
-                    @event.EventsLog = log;
+                    event_.EventsLog = _context.EventsLogs.FirstOrDefault(l => l.EventId == event_.Id);
                 }
-
+              
                 if (incident.Result != IncidentResult.Undefined)
                 {
                     continue;
