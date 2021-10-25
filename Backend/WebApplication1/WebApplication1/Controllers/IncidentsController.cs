@@ -127,7 +127,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet("info")]
-        public IActionResult Info()
+        public async Task<IActionResult> Info()
         {
             var incidents  = _context.Incidents.ToList();
             foreach (var incident in incidents)
@@ -135,6 +135,21 @@ namespace WebApplication1.Controllers
                 var risk = _context.Risks.Include(r=>r.Events).FirstOrDefault(r => r.Id == incident.RiskId);
                 var events = _context.Events.ToList();
                 incident.Events = risk.Events;
+
+                foreach (var @event in events)
+                {
+                    var log = new EventsLog
+                    {
+                        EventId = @event.Id,
+                        Start = DateTime.Now.ToLocalTime(),
+                        Finish = DateTime.Now.ToLocalTime().AddSeconds(@event.DurationInSeconds),
+                        RiskId = risk.Id,
+                        Status = EventLogStatus.Active
+                    };
+                    _context.EventsLogs.Add(log);
+                    await _context.SaveChangesAsync();
+                    @event.EventsLog = log;
+                }
 
                 if (incident.Result != IncidentResult.Undefined)
                 {

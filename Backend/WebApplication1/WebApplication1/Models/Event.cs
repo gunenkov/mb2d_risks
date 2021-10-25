@@ -8,7 +8,7 @@ namespace WebApplication1.Models
         public string Name {  get; set; }
         public int RiskId { get; set; }
         public int DurationInSeconds {  get; set; }
-        public List<EventsLog> EventsLogs { get; set; }
+        public EventsLog EventsLog { get; set; }
         public int Value { get; set; }
     }
 }
