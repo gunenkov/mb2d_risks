@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,8 @@ namespace WebApplication1
         public IConfiguration Configuration { get; }
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSpaStaticFiles(configuration => configuration.RootPath = "ClientApp/dist");
+
             services.AddCors(options => options.AddDefaultPolicy(builder => builder
                  .SetIsOriginAllowedToAllowWildcardSubdomains()
                  .WithOrigins(Configuration.GetSection("Cors:Origins").Get<string[]>())
@@ -64,6 +67,9 @@ namespace WebApplication1
 
             app.UseHttpsRedirection();
 
+            app.UseStaticFiles();
+            if (!env.IsDevelopment()) app.UseSpaStaticFiles();
+
             app.UseRouting();
 
             app.UseCors();
@@ -73,6 +79,12 @@ namespace WebApplication1
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+                if (env.IsDevelopment()) spa.UseAngularCliServer("start");
             });
         }
     }
