@@ -16,7 +16,7 @@ namespace WebApplication1.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Filename=DB.db");
+           // optionsBuilder.UseSqlite("DataSource=DB.db");
         }
     }
 }

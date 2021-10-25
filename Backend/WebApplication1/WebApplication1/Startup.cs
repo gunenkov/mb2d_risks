@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System.IO;
 using WebApplication1.BackgroundService;
 using WebApplication1.Models;
 
@@ -36,7 +37,14 @@ namespace WebApplication1
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApplication1", Version = "v1" });
             });
-            services.AddEntityFrameworkSqlite().AddDbContext<DataBaseContext>();
+            //services.AddEntityFrameworkSqlite().AddDbContext<DataBaseContext>();
+
+            services.AddDbContext<DataBaseContext>(db =>
+            {
+                var contentRoot = Configuration[HostDefaults.ContentRootKey];
+                var path = Path.Combine(Path.GetDirectoryName(contentRoot), "DB.db");
+                db.UseSqlite($"Data Source={path}");
+            });
 
             /* var connection = Configuration.GetConnectionString("DefaultConnection");
              services.AddDbContext<DataBaseContext>(options =>

@@ -13,5 +13,6 @@ namespace WebApplication1.Models
         public List<Event> Events { get; set; }
         public int Damage {  get; set; }
         public int Prob { get; set; }
+        public Operation Operation {  get; set; }
     }
 }

@@ -142,12 +142,12 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet("info")]
-        public async Task<IActionResult> Info()
+        public IActionResult Info()
         {
             var incidents  = _context.Incidents.ToList();
             foreach (var incident in incidents)
             {
-                var risk = _context.Risks.Include(r=>r.Events).FirstOrDefault(r => r.Id == incident.RiskId);
+                var risk = _context.Risks.Include(r=>r.Events).Include(r=>r.Operation).ThenInclude(o=>o.BusinessService).FirstOrDefault(r => r.Id == incident.RiskId);
                 incident.Events = risk.Events;
 
                 foreach (var event_ in risk.Events)

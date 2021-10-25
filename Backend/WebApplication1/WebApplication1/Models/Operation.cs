@@ -8,5 +8,6 @@ namespace WebApplication1.Models
         public string Name {  get; set; }
         public int BusinessServiceId {  get; set; }
         public List<Risk> Risks {  get; set; }  
+        public BusinessService BusinessService {  get; set; }
     }
 }
