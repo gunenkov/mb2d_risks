@@ -1,12 +1,27 @@
 <section class="dashboard">
+  <div class="dashboard__active">
+    <div class="container">
+      <div class="dashboard__header">
+        <h2 class="dashboard__activeTitle">Активные инциденты</h2>
+        <a href="https://gazprom-neft.ru/" target="_blank"><img class="dashboard__logo" src="../../../assets/gpn_logo.jpg" alt=""></a>
+      </div>
+      <div class="dashboard__incidents">
+        <app-incident *ngFor="let data of activeIncidents" [data]="data"></app-incident>
+      </div>
+    </div>
+  </div>
+  <div class="dashboard__history">
+    <div class="container">
+      <h2>История инцидентов</h2>
+      <div class="dashboard__incidents">
+        <app-incident *ngFor="let data of otherIncidents" [data]="data"></app-incident>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="footer">
   <div class="container">
-    <h1>Активные инциденты</h1>
-    <div class="dashboard__incidents">
-      <app-incident *ngFor="let data of activeIncidents" [data]="data"></app-incident>
-    </div>
-    <h1>История инцидентов</h1>
-    <div class="dashboard__incidents">
-      <app-incident *ngFor="let data of otherIncidents" [data]="data"></app-incident>
-    </div>
+    <p class="footer__copy">© <a href="#">#MB2D</a> 2021 | Все права принадлежат <a href="https://gazprom-neft.ru/" target="_blank">ПАО "Газпром нефть"</a></p>
   </div>
 </section>

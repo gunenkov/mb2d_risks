@@ -1,2 +1,78 @@
-<p>{{data.name}}</p>
-<p>{{data.dateTime | date}}</p>
+<div class="incident"
+  [class.incident-success]="data.result === IncidentResult.Escaped"
+  [class.incident-warning]="data.result === IncidentResult.Minimized"
+  [class.incident-danger]="data.result === IncidentResult.Passed || data.result === IncidentResult.Accepted"
+>
+  <div class="incident__content">
+    <h4 class="incident__header">
+      <p class="incident__breadcrumbs">Бизнес услуга <i class="fas fa-chevron-right"></i> Операционная услуга <i class="fas fa-chevron-right"></i> {{data.risk.name}}</p>
+      <h4 class="incident__name">{{data.name}}</h4>
+      <p class="incident__date">{{data.dateTime | date}}</p>
+    </h4>
+    <div class="incident__kpi">
+      <div class="kpi">
+        <p class="kpi__value"
+          [class.text-primary]="data.risk.damage < 3"
+          [class.text-warning]="data.risk.damage === 3"
+          [class.text-danger]="data.risk.damage > 3"
+        >{{data.risk.damage}}/5</p>
+        <p class="kpi__text">Размер ущерба</p>
+      </div>
+      <div class="kpi">
+        <p class="kpi__value"
+          [class.text-primary]="data.risk.prob < 3"
+          [class.text-warning]="data.risk.prob === 3"
+          [class.text-danger]="data.risk.prob > 3"
+        >{{data.risk.prob}}/5</p>
+        <p class="kpi__text">Вероятность риска</p>
+      </div>
+      <div class="kpi">
+        <p class="kpi__value"
+          [class.text-primary]="data.risk.value < 15"
+          [class.text-warning]="data.risk.value === 15"
+          [class.text-danger]="data.risk.value > 15"
+        >{{data.risk.value}}/25</p>
+        <p class="kpi__text">Значимость риска</p>
+      </div>
+    </div>
+  </div>
+  <div class="incident__panel">
+    <div class="incident__events">
+      <div 
+        *ngFor="let event of data.events" 
+        class="event"
+        [class.text-primary]="event.eventsLog.status === EventLogStatus.Active"
+        [class.text-danger]="event.eventsLog.status === EventLogStatus.Failed"
+        [class.text-success]="event.eventsLog.status === EventLogStatus.Success"
+      >
+        <div class="event__icon">
+          <i *ngIf="event.eventsLog.status === EventLogStatus.Active" class="fas fa-spinner"></i>
+          <i *ngIf="event.eventsLog.status === EventLogStatus.Success" class="far fa-check-circle"></i>
+          <i *ngIf="event.eventsLog.status === EventLogStatus.Failed" class="far fa-times-circle"></i>
+        </div>
+        <div class="event__name">{{event.name}}</div>
+      </div>
+    </div>
+    <div class="incident__results">
+      <div class="result">
+        <p *ngIf="data.result === IncidentResult.Undefined" class="result__value text-primary">Активный</p>
+        <p *ngIf="data.result === IncidentResult.Escaped" class="result__value text-success">Решён</p>
+        <p *ngIf="data.result === IncidentResult.Minimized" class="result__value text-warning">Снижен</p>
+        <p *ngIf="data.result === IncidentResult.Passed || data.result === IncidentResult.Accepted" class="result__value text-danger">Не решён</p>
+        <div class="result__text">Статус инцидента</div>
+      </div>
+      <div class="result">
+        <p 
+          *ngIf="data.result !== IncidentResult.Undefined else analysing"
+          class="result__value"  
+          [class.text-success]="!isRiskMarkInCorrect()"
+          [class.text-danger]="isRiskMarkInCorrect()"
+        >{{isRiskMarkInCorrect() ? 'Не соответствует' : 'Соответствует'}}</p>
+        <ng-template #analysing>
+          <p class="result__value text-primary">В ожидании...</p>
+        </ng-template>
+        <div class="result__text">Оценка риска</div>
+      </div>
+    </div>
+  </div>
+</div>

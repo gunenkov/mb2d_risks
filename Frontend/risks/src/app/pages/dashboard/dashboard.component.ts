@@ -16,7 +16,8 @@ export class DashboardComponent implements OnInit {
 
   getData(): void {
     this.svc$.getAll().subscribe(incidents => {
-      this.activeIncidents = this.otherIncidents = [];
+      this.activeIncidents = [];
+      this.otherIncidents = [];
 
       for (let incident of incidents.reverse()) {
         if (incident.result === IncidentResult.Undefined) {

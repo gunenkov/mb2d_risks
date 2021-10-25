@@ -21,6 +21,7 @@ export class RiskDto {
   wantedStatus: RiskStatus;
   damage: number;
   prob: number;
+  value: number;
   events: EventDto[];
 
   constructor(data: RiskInterface) {
@@ -31,6 +32,7 @@ export class RiskDto {
     this.wantedStatus = data.wantedStatus;
     this.damage = data.damage;
     this.prob = data.prob;
+    this.value = data.damage * data.prob;
 
     if (data.events) {
       this.events = data.events.map(data => new EventDto(data));
