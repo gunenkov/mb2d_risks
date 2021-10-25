@@ -5,9 +5,10 @@ import { RiskDto, RiskInterface } from "./risk-dto";
 export interface IncidentInterface {
   id: number;
   name: string;
-  date: number;
+  dateTime: string;
   result: IncidentResult;
   ccorresponds: boolean;
+  riskId: number;
 
   risk: RiskInterface;
   events: EventInterface[];
@@ -16,7 +17,7 @@ export interface IncidentInterface {
 export class IncidentDto {
   id: number;
   name: string;
-  date: number;
+  dateTime: Date;
   result: IncidentResult;
   ccorresponds: boolean;
 
@@ -26,7 +27,7 @@ export class IncidentDto {
   constructor(data: IncidentInterface) {
     this.id = data.id;
     this.name = data.name;
-    this.date = data.date;
+    this.dateTime = new Date(data.dateTime);
     this.result = data.result;
     this.ccorresponds = data.ccorresponds;
 

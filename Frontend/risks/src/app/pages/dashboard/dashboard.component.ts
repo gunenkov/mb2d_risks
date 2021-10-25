@@ -25,8 +25,6 @@ export class DashboardComponent implements OnInit {
           this.otherIncidents.push(incident);
         }
       }
-
-      console.log(this.activeIncidents, this.otherIncidents);
     });
   }
 

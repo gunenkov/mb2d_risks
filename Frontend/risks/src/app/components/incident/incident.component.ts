@@ -7,11 +7,12 @@ import { IncidentDto } from 'src/app/dto/incident-dto';
   styleUrls: ['./incident.component.styl']
 })
 export class IncidentComponent implements OnInit {
-  @Input() data = IncidentDto;
+  @Input() data: IncidentDto;
 
   constructor() { }
 
   ngOnInit(): void {
+    console.log(this.data);
   }
 
 }

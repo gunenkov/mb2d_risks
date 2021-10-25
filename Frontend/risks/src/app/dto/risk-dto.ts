@@ -10,6 +10,7 @@ export interface RiskInterface {
   damage: number;
   prob: number;
   events: EventInterface[];
+  incidents: any[];
 }
 
 export class RiskDto {
