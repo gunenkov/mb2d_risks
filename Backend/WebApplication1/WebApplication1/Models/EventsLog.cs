@@ -8,5 +8,6 @@ namespace WebApplication1.Models
         public DateTime Start { get; set; }
         public bool IsExternalFactor { get; set; }
         public bool IsSuccess { get; set; }
+        public int EventId { get; set; }
     }
 }
