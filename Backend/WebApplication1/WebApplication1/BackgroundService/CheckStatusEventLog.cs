@@ -17,7 +17,6 @@ namespace WebApplication1.BackgroundService
             _scopeFactory = scopeFactory;
         }
 
-        //Основной процесс проверки
         private async Task DoWorkAsync()
         {
             var currentDate = DateTime.Now.ToLocalTime();
@@ -34,7 +33,7 @@ namespace WebApplication1.BackgroundService
                 //получаем продолжительность
                 var duration = context.Events.FirstOrDefault(x => x.Id == myevent.Id).DurationInSeconds;
                 //если конец меньше текущей даты
-                if (myevent.Start.AddSeconds(duration) < currentDate)
+                if (myevent.Finish > currentDate)
                 {
                     //и произошёл внешний фактор
                     if (myevent.IsExternalFactor)
