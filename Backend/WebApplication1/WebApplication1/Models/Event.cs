@@ -9,5 +9,6 @@ namespace WebApplication1.Models
         public int RiskId { get; set; }
         public int DurationInSeconds {  get; set; }
         public List<EventsLog> EventsLogs { get; set; }
+        public int Value { get; set; }
     }
 }
