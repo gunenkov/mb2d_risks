@@ -188,5 +188,25 @@ namespace WebApplication1.Controllers
 
             return Ok(incidents);
         }
+
+        public class ExternalDto
+        {
+            public int EventLogId {  get; set; }
+        }
+
+        [HttpPost("external")]
+        public async Task<IActionResult> PerformExternalFactor(ExternalDto externalDto)
+        {
+            var log = _context.EventsLogs.FirstOrDefault(l => l.Id == externalDto.EventLogId);
+
+            if (log != null)
+            {
+                log.IsExternalFactor = true;
+                _context.Entry(log).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return Ok(log);
+            }
+            return NotFound("Мероприятие не найдено");
+        }
     }
 }
