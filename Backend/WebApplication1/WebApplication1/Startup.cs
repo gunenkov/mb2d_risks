@@ -21,15 +21,13 @@ namespace WebApplication1
         public IConfiguration Configuration { get; }
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAll", builder => builder
-                    .AllowAnyHeader()
-                    .SetIsOriginAllowed(s => true)
-                    .AllowCredentials()
-                    .AllowAnyMethod());
-            });
-
+            services.AddCors(options => options.AddDefaultPolicy(builder => builder
+                 .SetIsOriginAllowedToAllowWildcardSubdomains()
+                 .WithOrigins(Configuration.GetSection("Cors:Origins").Get<string[]>())
+                 .AllowAnyMethod()
+                 .AllowCredentials()
+                 .AllowAnyHeader()
+             ));
 
             services.AddControllers().AddNewtonsoftJson(options =>
    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
@@ -39,12 +37,15 @@ namespace WebApplication1
             });
             //services.AddEntityFrameworkSqlite().AddDbContext<DataBaseContext>();
 
-            services.AddDbContext<DataBaseContext>(db =>
-            {
-                var contentRoot = Configuration[HostDefaults.ContentRootKey];
-                var path = Path.Combine(Path.GetDirectoryName(contentRoot), "DB.db");
-                db.UseSqlite($"Data Source={path}");
-            });
+            /* services.AddDbContext<DataBaseContext>(db =>
+             {
+                 var contentRoot = Configuration[HostDefaults.ContentRootKey];
+                 var path = Path.Combine(Path.GetDirectoryName(contentRoot), "DB.db");
+                 db.UseSqlite($"Data Source={path}");
+             });*/
+            var connection = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<DataBaseContext>(options =>
+                 options.UseSqlServer(connection));
 
             /* var connection = Configuration.GetConnectionString("DefaultConnection");
              services.AddDbContext<DataBaseContext>(options =>
@@ -65,7 +66,7 @@ namespace WebApplication1
 
             app.UseRouting();
 
-            app.UseCors("AllowAll");
+            app.UseCors();
 
             app.UseAuthorization();
 

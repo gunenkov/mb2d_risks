@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication1.Models;
 
@@ -14,16 +15,19 @@ namespace WebApplication1.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.11");
+                .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("ProductVersion", "5.0.11")
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("WebApplication1.Models.BusinessService", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -34,18 +38,27 @@ namespace WebApplication1.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("DurationInSeconds")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IncidentId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RiskId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IncidentId");
 
                     b.HasIndex("RiskId");
 
@@ -56,23 +69,31 @@ namespace WebApplication1.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("EventId")
-                        .HasColumnType("INTEGER");
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Finish")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsExternalFactor")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bit");
 
-                    b.Property<bool>("IsSuccess")
-                        .HasColumnType("INTEGER");
+                    b.Property<int>("RiskId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Start")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EventId");
+                    b.HasIndex("EventId")
+                        .IsUnique();
 
                     b.ToTable("EventsLogs");
                 });
@@ -81,16 +102,23 @@ namespace WebApplication1.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Ccorresponds")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("DateTime")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Result")
+                        .HasColumnType("int");
 
                     b.Property<int>("RiskId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -103,13 +131,14 @@ namespace WebApplication1.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("BusinessServiceId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -122,25 +151,26 @@ namespace WebApplication1.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("CurrentStatus")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("Damage")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("OperationId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("Prob")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("WantedStatus")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -151,6 +181,10 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.Event", b =>
                 {
+                    b.HasOne("WebApplication1.Models.Incident", null)
+                        .WithMany("Events")
+                        .HasForeignKey("IncidentId");
+
                     b.HasOne("WebApplication1.Models.Risk", null)
                         .WithMany("Events")
                         .HasForeignKey("RiskId")
@@ -161,35 +195,43 @@ namespace WebApplication1.Migrations
             modelBuilder.Entity("WebApplication1.Models.EventsLog", b =>
                 {
                     b.HasOne("WebApplication1.Models.Event", null)
-                        .WithMany("EventsLogs")
-                        .HasForeignKey("EventId");
+                        .WithOne("EventsLog")
+                        .HasForeignKey("WebApplication1.Models.EventsLog", "EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Incident", b =>
                 {
-                    b.HasOne("WebApplication1.Models.Risk", null)
+                    b.HasOne("WebApplication1.Models.Risk", "Risk")
                         .WithMany("Incidents")
                         .HasForeignKey("RiskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Risk");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Operation", b =>
                 {
-                    b.HasOne("WebApplication1.Models.BusinessService", null)
+                    b.HasOne("WebApplication1.Models.BusinessService", "BusinessService")
                         .WithMany("Operations")
                         .HasForeignKey("BusinessServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("BusinessService");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Risk", b =>
                 {
-                    b.HasOne("WebApplication1.Models.Operation", null)
+                    b.HasOne("WebApplication1.Models.Operation", "Operation")
                         .WithMany("Risks")
                         .HasForeignKey("OperationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Operation");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.BusinessService", b =>
@@ -199,7 +241,12 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.Event", b =>
                 {
-                    b.Navigation("EventsLogs");
+                    b.Navigation("EventsLog");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Incident", b =>
+                {
+                    b.Navigation("Events");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Operation", b =>

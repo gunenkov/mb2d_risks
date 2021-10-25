@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebApplication1.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class DB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -49,7 +49,9 @@ namespace WebApplication1.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OperationId = table.Column<int>(type: "int", nullable: false),
                     CurrentStatus = table.Column<int>(type: "int", nullable: false),
-                    WantedStatus = table.Column<int>(type: "int", nullable: false)
+                    WantedStatus = table.Column<int>(type: "int", nullable: false),
+                    Damage = table.Column<int>(type: "int", nullable: false),
+                    Prob = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -63,27 +65,6 @@ namespace WebApplication1.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Events",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    RiskId = table.Column<int>(type: "int", nullable: false),
-                    DurationInSeconds = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Events", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Events_Risks_RiskId",
-                        column: x => x.RiskId,
-                        principalTable: "Risks",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Incidents",
                 columns: table => new
                 {
@@ -91,7 +72,9 @@ namespace WebApplication1.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RiskId = table.Column<int>(type: "int", nullable: false),
-                    DateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    DateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Ccorresponds = table.Column<bool>(type: "bit", nullable: false),
+                    Result = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -105,15 +88,46 @@ namespace WebApplication1.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RiskId = table.Column<int>(type: "int", nullable: false),
+                    DurationInSeconds = table.Column<int>(type: "int", nullable: false),
+                    Value = table.Column<int>(type: "int", nullable: false),
+                    IncidentId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Events_Incidents_IncidentId",
+                        column: x => x.IncidentId,
+                        principalTable: "Incidents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Events_Risks_RiskId",
+                        column: x => x.RiskId,
+                        principalTable: "Risks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "EventsLogs",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Start = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Finish = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsExternalFactor = table.Column<bool>(type: "bit", nullable: false),
-                    IsSuccess = table.Column<bool>(type: "bit", nullable: false),
-                    EventId = table.Column<int>(type: "int", nullable: true)
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    EventId = table.Column<int>(type: "int", nullable: false),
+                    RiskId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -123,8 +137,13 @@ namespace WebApplication1.Migrations
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_IncidentId",
+                table: "Events",
+                column: "IncidentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Events_RiskId",
@@ -134,7 +153,8 @@ namespace WebApplication1.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_EventsLogs_EventId",
                 table: "EventsLogs",
-                column: "EventId");
+                column: "EventId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Incidents_RiskId",
@@ -158,10 +178,10 @@ namespace WebApplication1.Migrations
                 name: "EventsLogs");
 
             migrationBuilder.DropTable(
-                name: "Incidents");
+                name: "Events");
 
             migrationBuilder.DropTable(
-                name: "Events");
+                name: "Incidents");
 
             migrationBuilder.DropTable(
                 name: "Risks");
