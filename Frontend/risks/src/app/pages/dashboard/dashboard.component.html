@@ -1,1 +1,12 @@
-<p>dashboard works!</p>
+<section class="dashboard">
+  <div class="container">
+    <h1>Активные инциденты</h1>
+    <div class="dashboard__incidents">
+      <app-incident *ngFor="let data of activeIncidents" [data]="data"></app-incident>
+    </div>
+    <h1>История инцидентов</h1>
+    <div class="dashboard__incidents">
+      <app-incident *ngFor="let data of otherIncidents" [data]="data"></app-incident>
+    </div>
+  </div>
+</section>
