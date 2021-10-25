@@ -188,24 +188,48 @@ export class IncidentsService {
     };
 
 
-    const response: IncidentInterface[] = [
-      activeData,
-      otherData,
-      activeData,
-      {
-        ...otherData,
-        result: 3
-      },
-      {
-        ...otherData,
-        result: 2
-      }
-    ];
+    // const response: IncidentInterface[] = [
+    //   activeData,
+    //   otherData,
+    //   activeData,
+    //   {
+    //     ...otherData,
+    //     result: 3
+    //   },
+    //   {
+    //     ...otherData,
+    //     result: 2
+    //   }
+    // ];
 
-    return of(response)
-      .pipe(map(incidents => incidents.map(data => new IncidentDto(data))));
+    // return of(response)
+    //   .pipe(map(incidents => incidents.map(data => new IncidentDto(data))));
 
     return this.http$.get<IncidentInterface[]>(API_BASE_URL + '/incidents/info')
       .pipe(map(incidents => incidents.map(data => new IncidentDto(data))));
+  }
+
+  getBusinessServices(): Observable<any[]> {
+    return this.http$.get<any[]>(API_BASE_URL + '/businessservices');
+  }
+  
+  getOperationServices(): Observable<any[]> {
+    return this.http$.get<any[]>(API_BASE_URL + '/operations');
+  }
+  
+  getRisks(): Observable<any[]> {
+    return this.http$.get<any[]>(API_BASE_URL + '/risks');
+  }
+
+  addRisk(data: any): Observable<void> {
+    return this.http$.post<void>(API_BASE_URL + '/risks', data);
+  }
+  
+  addEvent(data: any): Observable<void> {
+    return this.http$.post<void>(API_BASE_URL + '/events', data);
+  }
+  
+  addIncident(data: any): Observable<void> {
+    return this.http$.post<void>(API_BASE_URL + '/incidents', data);
   }
 }

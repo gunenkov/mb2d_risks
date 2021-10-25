@@ -8,11 +8,33 @@
 
 .dashboard__activeTitle
   color: #fff
-  flex: 1 1 auto
+  flex: 1 0 auto
+
+
+.menu
+  display: flex
+  justify-content: space-between
+
+.menu__item
+  margin-right: 30px
+  color: #fff
+  text-decoration: none
+  opacity: 0.8
+  transition: 0.3s
+
+  &:hover
+    opacity: 1
+
+  &:last-child
+    margin-right: 0
+
 
 .dashboard__logo
-  flex: 0 0 100px
-  max-width: 100px
+  flex: 1 0 auto
+  text-align: right
+
+  img
+    max-width: 100px
 
 .dashboard__history
   padding: 30px
@@ -27,3 +49,11 @@
   
   a
     text-decoration: none
+
+
+.modal
+  label
+    margin-bottom: 5px
+
+  .form-group
+    margin-bottom: 16px

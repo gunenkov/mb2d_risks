@@ -11,6 +11,7 @@ export interface RiskInterface {
   prob: number;
   events: EventInterface[];
   incidents: any[];
+  operation: any;
 }
 
 export class RiskDto {
@@ -23,6 +24,7 @@ export class RiskDto {
   prob: number;
   value: number;
   events: EventDto[];
+  operation: any;
 
   constructor(data: RiskInterface) {
     this.id = data.id;
@@ -33,6 +35,7 @@ export class RiskDto {
     this.damage = data.damage;
     this.prob = data.prob;
     this.value = data.damage * data.prob;
+    this.operation = data.operation;
 
     if (data.events) {
       this.events = data.events.map(data => new EventDto(data));
