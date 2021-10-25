@@ -20,12 +20,14 @@ namespace WebApplication1
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+   options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApplication1", Version = "v1" });
             });
             services.AddEntityFrameworkSqlite().AddDbContext<DataBaseContext>();
+
             /* var connection = Configuration.GetConnectionString("DefaultConnection");
              services.AddDbContext<DataBaseContext>(options =>
                  options.UseSqlServer(connection));*/

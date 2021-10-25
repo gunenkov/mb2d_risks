@@ -72,11 +72,33 @@ namespace WebApplication1.Controllers
             return NoContent();
         }
 
+        public class IncidentDto
+        {
+            public string IncidentName {  get; set; }
+            public string RiskName {  get; set; }
+        }
+
+
         // POST: api/Incidents
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Incident>> PostIncident(Incident incident)
+        public async Task<ActionResult<Incident>> PostIncident(IncidentDto incidentDto)
         {
+            var risk = _context.Risks.FirstOrDefault(r=>r.Name == incidentDto.RiskName);
+
+            if (risk == null)
+            {
+                return NotFound("Риск не найден!");
+            }
+
+            var incident = new Incident
+            {
+                Name = incidentDto.IncidentName,
+                RiskId = risk.Id,
+                DateTime = DateTime.Now.ToLocalTime(),
+                Result = IncidentResult.Undefined
+            };
+
             _context.Incidents.Add(incident);
             await _context.SaveChangesAsync();
 
@@ -102,6 +124,50 @@ namespace WebApplication1.Controllers
         private bool IncidentExists(int id)
         {
             return _context.Incidents.Any(e => e.Id == id);
+        }
+
+        [HttpGet("info")]
+        public IActionResult Info()
+        {
+            var incidents  = _context.Incidents.ToList();
+            foreach (var incident in incidents)
+            {
+                var risk = _context.Risks.Include(r=>r.Events).FirstOrDefault(r => r.Id == incident.RiskId);
+                var events = _context.Events.ToList();
+                incident.Events = risk.Events;
+
+                if (incident.Result != IncidentResult.Undefined)
+                {
+                    continue;
+                }
+                
+                var prod = risk.Prob * risk.Damage;
+
+                // нет мероприятий
+                if (risk.Events.Count == 0)
+                {
+                    incident.Result = IncidentResult.Accepted;
+                }
+
+                else
+                {
+                    // сумма значимостей всех инцидентов
+                    var valuesSum = incident.Events.Sum(i=>i.Value);
+
+                    if (valuesSum > prod)
+                    {
+                        incident.Result = IncidentResult.Escaped;
+                    }
+
+                    else
+                    {
+                        incident.Result = IncidentResult.Minimized;
+                    }
+                }
+               
+            }
+
+            return Ok(incidents);
         }
     }
 }

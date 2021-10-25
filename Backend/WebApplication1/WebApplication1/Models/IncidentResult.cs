@@ -2,6 +2,7 @@
 {
     public enum IncidentResult
     {
+        Undefined,
         Escaped,
         Minimized,
         Passed,

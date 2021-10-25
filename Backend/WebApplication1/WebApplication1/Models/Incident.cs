@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace WebApplication1.Models
 {
@@ -10,5 +11,7 @@ namespace WebApplication1.Models
         public DateTime DateTime {  get; set; }
         public bool Ccorresponds { get; set; }
         public IncidentResult Result { get; set; }
+        public List<Event> Events { get; set; }
+        public Risk Risk { get; set; }
     }
 }
