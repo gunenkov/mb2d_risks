@@ -11,5 +11,7 @@ namespace WebApplication1.Models
         public RiskStatus WantedStatus { get; set; }
         public List<Incident> Incidents { get; set;  }
         public List<Event> Events { get; set; }
+        public int Damage {  get; set; }
+        public int Prob { get; set; }
     }
 }
